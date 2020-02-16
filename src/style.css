@@ -58,3 +58,8 @@ li strong {
   border-left: 0.8rem solid #d9d9d9;
   line-height: 1.8rem;
 }
+
+.list {
+  list-style-type: disc;
+  padding-left: 2rem;
+}
