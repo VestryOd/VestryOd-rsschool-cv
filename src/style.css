@@ -63,3 +63,14 @@ li strong {
   list-style-type: disc;
   padding-left: 2rem;
 }
+
+.code-wrapper {
+  padding: 2rem;
+}
+
+pre,
+code {
+  font-family: "Consolas", "Lucida Console", monospace;
+  background-color: #eeeeee;
+  overflow-x: scroll;
+}

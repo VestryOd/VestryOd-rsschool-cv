@@ -59,6 +59,151 @@
           </ul>
         </div>
       </section>
+      <section>
+        <header>
+          <h3>example of code</h3>
+        </header>
+        <p class="section-info">This code was developed for the <strong>Google Apps Script</strong> platform, which
+          understands only the <strong>ES05</strong> syntax.</p>
+        <div class="code-wrapper">
+          <pre class="prettyprint"><code class="language-javascript">
+      /* get string from 'action' select
+
+        return {}. Keys:
+          id:         number or 'new'
+          info:       object with data from inputs
+          stage:      only 'details' changes
+          task:       if need finish task - true/false
+          reminder:   {} keys:
+              id:      'id' of existence reminder or empty
+              info:    all info from reminders inputs
+
+      */
+      function prepareAndSendRecord(selectedAction) {
+          var resultObject = {};
+
+          var idElem = document.querySelector('#form #id');
+          var idValue = idElem.value;
+          var error = false;
+          var addReminderElem = document.querySelector('#add-reminder input');
+          var reminderId = document.querySelector('#reminder-id');
+
+          if (selectedAction == 'Выбрать действие') {
+              reportModalShow({ type: 'error', title: 'Ошибка! Что-то пошло не так...', text: 'Выберите необходимое действие для введенной записи!' });
+              error = true;
+          } else if (selectedAction == 'Внести/сохранить изменения') {
+              resultObject.stage = undefined;
+              if (idValue != 'new') {
+                  var recordsData = saveRecords();
+                  var recordsState = getProjectRecordStates();
+
+                  resultObject.info = checkEqualObjects(recordsState, recordsData);
+              } else {
+                  resultObject.info = saveNewRecords();
+              }
+              if (addReminderElem.checked == true) {
+                  var rem = {};
+                  var reminderData = saveReminder();
+
+                  if (reminderId.dataset.id != '') {
+
+                      rem.id = reminderId.dataset.id + '@google.com';
+
+                      var reminderState = getReminderStates();
+                      var difference = checkEqualObjects(reminderState, reminderData);
+
+                      if (difference['reminder-date'] || difference['reminder-time'] || difference['reminder-duration']) {
+                          rem.info = prepareReminderObjToSpreadsheet(reminderData);
+                      } else {
+                          rem.info = difference;
+                      }
+                  } else {
+                      rem.id = undefined;
+                      rem.info = prepareReminderObjToSpreadsheet(reminderData);
+                  }
+                  resultObject.reminder = rem;
+              } else {
+                  resultObject.reminder = undefined;
+              }
+          } else if (selectedAction == 'Сменить этап') {
+              if (idValue == 'new') {
+                  reportModalShow({ type: 'error', title: 'Ошибка! Что-то пошло не так...', text: 'Смена этапа возможна только у существующего проекта!' });
+                  error = true;
+              } else {
+                  resultObject.info = undefined;
+                  resultObject.reminder = undefined;
+                  var shangeData = changeStage();// {stage, done}
+
+                  resultObject.stage = shangeData;
+              }
+          } else if (selectedAction == 'Завершить задачу') {
+              if (idValue == 'new') {
+                  reportModalShow({ type: 'error', title: 'Ошибка! Что-то пошло не так...', text: 'Завершить можно только существующую задачу!' });
+                  error = true;
+              } else {
+                  resultObject.stage = undefined;
+                  resultObject.task = true;
+                  resultObject.info = finishTask();
+                  if (reminderId.dataset.id != '') {
+                    resultObject.reminder = {};
+                    resultObject.reminder.id = reminderId.dataset.id + '@google.com';
+                  } else {
+                    resultObject.reminder = undefined;
+                  }
+              }
+          } else if (selectedAction == 'Изменить/сохранить напоминание') {
+              resultObject.info = undefined;
+              resultObject.stage = undefined;
+
+              if (addReminderElem.checked == true) {
+                  var rem = {};
+                  if (reminderId.dataset.id != '') {
+                      rem.id = reminderId.dataset.id + '@google.com';
+
+                      var reminderData = saveReminder();
+                      var reminderState = getReminderStates();
+
+                      var difference = checkEqualObjects(reminderState, reminderData);
+                      if (difference['reminder-date'] || difference['reminder-time'] || difference['reminder-duration']) {
+                          rem.info = prepareReminderObjToSpreadsheet(reminderData);
+                      } else {
+                          rem.info = difference;
+                      }
+                  } else {
+                      var reminderData = saveReminder();
+                      rem.id = undefined;
+                      rem.info = prepareReminderObjToSpreadsheet(reminderData);
+                  }
+                  resultObject.reminder = rem;
+              }
+          } else if (selectedAction == 'Удалить напоминание') {
+              if (reminderId.dataset.id == '') {
+                  reportModalShow({ type: 'error', title: 'Ошибка! Что-то пошло не так...', text: 'Удалить можно только существующее напоминание!' });
+                  error = true;
+              } else {
+                  resultObject.info = undefined;
+                  resultObject.stage = undefined;
+
+                  var rem = {};
+                  rem.id = reminderId.dataset.id + '@google.com';
+                  rem.info = undefined;
+                  rem.clear = true;
+                  resultObject.reminder = rem;
+              }
+          }
+
+          if (resultObject.info == undefined && resultObject.reminder == undefined && resultObject.stage == undefined && resultObject.task == undefined) {
+              reportModalShow({ type: 'error', title: 'Ошибка!', text: 'Запись пуста. Добавьте данные для сохранения!' });
+          } else {
+              if (!error) {
+                  resultObject.id = idValue;
+              }
+              return resultObject;
+          }
+      }
+                </code></pre>
+        </div>
+      </section>
     </main>
   </div>
   <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?lang=js"></script>
