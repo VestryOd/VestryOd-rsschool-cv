@@ -169,3 +169,12 @@ function prepareAndSendRecord(selectedAction) {
 	- August 2015 - September 2015
 - **Web technologies (HTML, CSS, jQuery, JS, PHP, SQL) –** _online_
 	- Autumn 2016 - Autumn 2017
+
+  ### LANGUAGE COMPETENCIES
+* Russian: native language
+
+* Ukrainian: fluent (speaking, reading, writing)
+
+* English: intermediate (writing, reading); pre- intermediate in speaking
+
+* German: basic (speaking, reading, writing)
