@@ -154,3 +154,10 @@ function prepareAndSendRecord(selectedAction) {
     }
 }
 ```
+
+### WORK EXPERIENCE
+**GardenLab -** _Odessa, Ukraine_
+**Business process automation manager**
+
+* Development of a business process automation system using Javascript native, Google API and Google Apps Script.
+* Development of data storage (Google Spreadsheets & SQL Queries) and web layouts.
