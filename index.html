@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML, CSS & Git Basics</title>
+  <link rel="stylesheet" href="src/reset.css">
+  <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+  <div class="content">
+    <header>
+      <div class="wrapper">
+        <header>
+          <h1>kaspriv maksym</h1>
+        </header>
+        <section>
+          <div class="contacts">
+            <ul class="person-data">
+              <h3>Contact data</h3>
+              <li>Odessa, Ukraine</li>
+              <li>Phone +38 097 669 73 83</li>
+              <li>Viber +38 095 323 52 52</li>
+              <li><a href="mailto:vestry.odessa@gmail.com">vestry.odessa@gmail.com</a></li>
+            </ul>
+            <div class="person-image">
+              <img src="src/person.jpg" alt="Kaspriv Maksym" width="auto" height="300">
+            </div>
+          </div>
+        </section>
+      </div>
+    </header>
+    <main>
+      <section>
+        <div class="wrapper">
+          <header>
+            <h3>summary</h3>
+          </header>
+          <p class="section-info">
+            Reliable, energetic and resourceful web development specialist. I’m constantly learning, and plan React courses in
+            February 2020. Interesting in project management. I have experience in website design and scripting. In addition,
+            an expert in the field of communication and building relationships with clients, extensive experience in teamwork.
+          </p>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper">
+          <header>
+            <h3>skills</h3>
+          </header>
+          <ul class="list section-info">
+            <li>Languages: PHP (basics), Javascript, HTML, CSS</li>
+            <li>Web libs: jQuery, Materialize.css, Bootstrap, Animate.css</li>
+            <li>Web Dev tools: Gulp, npm</li>
+            <li>QA: Exploratory, Ad Hoc & Functional testing, checklists and test cases, bug reporting</li>
+            <li>VCS: Git basics</li>
+            <li>DB: MySQL (basic set of queries)</li>
+            <li>Graphic editors: CorelDRAW, ADOBE Photoshop</li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <header>
+          <h3>example of code</h3>
+        </header>
+        <p class="section-info">This code was developed for the <strong>Google Apps Script</strong> platform, which
+          understands only the <strong>ES05</strong> syntax.</p>
+        <div class="code-wrapper">
+          <pre class="prettyprint"><code class="language-javascript">
+      /* get string from 'action' select
+
+        return {}. Keys:
+          id:         number or 'new'
+          info:       object with data from inputs
+          stage:      only 'details' changes
+          task:       if need finish task - true/false
+          reminder:   {} keys:
+              id:      'id' of existence reminder or empty
+              info:    all info from reminders inputs
+
+      */
+      function prepareAndSendRecord(selectedAction) {
+          var resultObject = {};
+
+          var idElem = document.querySelector('#form #id');
+          var idValue = idElem.value;
+          var error = false;
+          var addReminderElem = document.querySelector('#add-reminder input');
+          var reminderId = document.querySelector('#reminder-id');
+
+          if (selectedAction == 'Выбрать действие') {
+              reportModalShow({ type: 'error', title: 'Ошибка! Что-то пошло не так...', text: 'Выберите необходимое действие для введенной записи!' });
+              error = true;
+          } else if (selectedAction == 'Внести/сохранить изменения') {
+              resultObject.stage = undefined;
+              if (idValue != 'new') {
+                  var recordsData = saveRecords();
+                  var recordsState = getProjectRecordStates();
+
+                  resultObject.info = checkEqualObjects(recordsState, recordsData);
+              } else {
+                  resultObject.info = saveNewRecords();
+              }
+              if (addReminderElem.checked == true) {
+                  var rem = {};
+                  var reminderData = saveReminder();
+
+                  if (reminderId.dataset.id != '') {
+
+                      rem.id = reminderId.dataset.id + '@google.com';
+
+                      var reminderState = getReminderStates();
+                      var difference = checkEqualObjects(reminderState, reminderData);
+
+                      if (difference['reminder-date'] || difference['reminder-time'] || difference['reminder-duration']) {
+                          rem.info = prepareReminderObjToSpreadsheet(reminderData);
+                      } else {
+                          rem.info = difference;
+                      }
+                  } else {
+                      rem.id = undefined;
+                      rem.info = prepareReminderObjToSpreadsheet(reminderData);
+                  }
+                  resultObject.reminder = rem;
+              } else {
+                  resultObject.reminder = undefined;
+              }
+          } else if (selectedAction == 'Сменить этап') {
+              if (idValue == 'new') {
+                  reportModalShow({ type: 'error', title: 'Ошибка! Что-то пошло не так...', text: 'Смена этапа возможна только у существующего проекта!' });
+                  error = true;
+              } else {
+                  resultObject.info = undefined;
+                  resultObject.reminder = undefined;
+                  var shangeData = changeStage();// {stage, done}
+
+                  resultObject.stage = shangeData;
+              }
+          } else if (selectedAction == 'Завершить задачу') {
+              if (idValue == 'new') {
+                  reportModalShow({ type: 'error', title: 'Ошибка! Что-то пошло не так...', text: 'Завершить можно только существующую задачу!' });
+                  error = true;
+              } else {
+                  resultObject.stage = undefined;
+                  resultObject.task = true;
+                  resultObject.info = finishTask();
+                  if (reminderId.dataset.id != '') {
+                    resultObject.reminder = {};
+                    resultObject.reminder.id = reminderId.dataset.id + '@google.com';
+                  } else {
+                    resultObject.reminder = undefined;
+                  }
+              }
+          } else if (selectedAction == 'Изменить/сохранить напоминание') {
+              resultObject.info = undefined;
+              resultObject.stage = undefined;
+
+              if (addReminderElem.checked == true) {
+                  var rem = {};
+                  if (reminderId.dataset.id != '') {
+                      rem.id = reminderId.dataset.id + '@google.com';
+
+                      var reminderData = saveReminder();
+                      var reminderState = getReminderStates();
+
+                      var difference = checkEqualObjects(reminderState, reminderData);
+                      if (difference['reminder-date'] || difference['reminder-time'] || difference['reminder-duration']) {
+                          rem.info = prepareReminderObjToSpreadsheet(reminderData);
+                      } else {
+                          rem.info = difference;
+                      }
+                  } else {
+                      var reminderData = saveReminder();
+                      rem.id = undefined;
+                      rem.info = prepareReminderObjToSpreadsheet(reminderData);
+                  }
+                  resultObject.reminder = rem;
+              }
+          } else if (selectedAction == 'Удалить напоминание') {
+              if (reminderId.dataset.id == '') {
+                  reportModalShow({ type: 'error', title: 'Ошибка! Что-то пошло не так...', text: 'Удалить можно только существующее напоминание!' });
+                  error = true;
+              } else {
+                  resultObject.info = undefined;
+                  resultObject.stage = undefined;
+
+                  var rem = {};
+                  rem.id = reminderId.dataset.id + '@google.com';
+                  rem.info = undefined;
+                  rem.clear = true;
+                  resultObject.reminder = rem;
+              }
+          }
+
+          if (resultObject.info == undefined && resultObject.reminder == undefined && resultObject.stage == undefined && resultObject.task == undefined) {
+              reportModalShow({ type: 'error', title: 'Ошибка!', text: 'Запись пуста. Добавьте данные для сохранения!' });
+          } else {
+              if (!error) {
+                  resultObject.id = idValue;
+              }
+              return resultObject;
+          }
+      }
+                </code></pre>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper">
+          <header>
+            <h3>work experience</h3>
+          </header>
+          <div class="section-info">
+            <p><strong>GardenLab</strong> - Odessa, Ukraine</p>
+            <p class="job-position">Business process automation manager.</p>
+            <ul class="list">
+              <li>Development of a business process automation system using Javascript native, Google API and Google Apps
+                Script.</li>
+              <li>Development of data storage (Google Spreadsheets & SQL Queries) and web layouts.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper">
+          <header>
+            <h3>education</h3>
+          </header>
+          <div class="section-info">
+            <ul class="list">
+              <li><strong>Bachelor of Computer Engineering </strong><span class="details">- ONPI, Odessa, Ukraine (September
+                  2001 - July 2005)</span></li>
+              <li><strong>Software Testing </strong><span class="details">- QATestLab (Certificate), online (August 2015 -
+                  September 2015)</span></li>
+              <li><strong>Web technologies</strong><span class="details">- HTML, CSS, jQuery, JS, PHP, SQL, online (Autumn
+                  2016 - Autumn 2017)</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper">
+          <header>
+            <h3>Language competencies</h3>
+          </header>
+          <div class="section-info">
+            <ul class="list">
+              <li><strong>Russian: </strong><span class="details">native language</span></li>
+              <li><strong>Ukrainian: </strong><span class="details">fluent</span></li>
+              <li><strong>English: </strong><span class="details">pre-intermediate</span></li>
+              <li><strong>German: </strong><span class="details">basic</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?lang=js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+.content {
+  max-width: 1024px;
+  margin: 0 auto;
+  font-family: "Segoe UI", "Helvetica", "Arial", sans-serif;
+  font-size: 1.2rem;
+}
+
+.wrapper {
+  margin: 50px 0;
+}
+
+h1 {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+
+h1,
+h3 {
+  padding: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #333333;
+  text-shadow: 0 0 1px #ffffff, 1px 1px 1px rgba(54, 54, 54, 0.3);
+}
+
+p strong,
+li strong {
+  font-weight: 700;
+}
+
+.contacts {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.5rem 0;
+}
+
+.person-data li {
+  padding: 0.8rem;
+}
+
+.person-image {
+  padding: 0.5rem;
+  border: 1px solid grey;
+  border-radius: 0.5rem;
+  box-shadow: 1px 1px 3px 1px rgba(79, 79, 79, 0.64);
+}
+
+.person-image img {
+  border-radius: 0.5rem;
+}
+
+.section-info {
+  padding: 1rem 0 1rem 0.8rem;
+  border-left: 0.8rem solid #d9d9d9;
+  line-height: 1.8rem;
+}
+
+.list {
+  list-style-type: disc;
+  padding-left: 2rem;
+}
+
+.code-wrapper {
+  padding: 2rem;
+}
+
+pre,
+code {
+  font-family: "Consolas", "Lucida Console", monospace;
+  background-color: #eeeeee;
+  overflow-x: scroll;
+}
+
+.job-position {
+  padding-bottom: 1rem;
+}
+
+.job-position,
+.details {
+  font-style: italic;
+}
