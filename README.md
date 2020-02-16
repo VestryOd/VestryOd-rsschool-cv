@@ -1,1 +1,1 @@
-# VestryOd-rsschool-cv
+# https://VestryOd.github.io/rsschool-cv/cv
