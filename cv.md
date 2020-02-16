@@ -161,3 +161,11 @@ function prepareAndSendRecord(selectedAction) {
 
 * Development of a business process automation system using Javascript native, Google API and Google Apps Script.
 * Development of data storage (Google Spreadsheets & SQL Queries) and web layouts.
+
+### EDUCATION
+- **Bachelor of Computer Engineering -** _ONPI, Odessa, Ukraine_
+	- September 2001 - July 2005
+- **Software Testing –** _QATestLab (Certificate), online_
+	- August 2015 - September 2015
+- **Web technologies (HTML, CSS, jQuery, JS, PHP, SQL) –** _online_
+	- Autumn 2016 - Autumn 2017
