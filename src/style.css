@@ -74,3 +74,12 @@ code {
   background-color: #eeeeee;
   overflow-x: scroll;
 }
+
+.job-position {
+  padding-bottom: 1rem;
+}
+
+.job-position,
+.details {
+  font-style: italic;
+}
